@@ -2,8 +2,7 @@
 // import EnrollmentButton from '@/components/EnrollmentButton';
 // import { auth } from '@/lib/auth';
 // import BookModal from '@/components/BookModal';
-import { DeleteAlert } from '@/components/DeleteAlert';
-import { EditModal } from '@/components/EditModal';
+
 import RoomBookingSection from '@/components/RoomBookingSection';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
@@ -170,78 +169,6 @@ export default async function RoomDetails({ params }) {
                     )}
                 </div>
 
-                {/* <aside className="lg:col-span-1">
-                    <div className="sticky top-24 rounded-[2rem] border border-white/10 bg-slate-950/90 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
-                        <div className="flex flex-col gap-5">
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <p className="text-sm uppercase tracking-[0.28em] text-slate-500">Room summary</p>
-                                    {hourlyRate != null ? (
-                                        <p className="mt-3 text-4xl font-black text-white">
-                                            ${hourlyRate}
-                                            <span className="ml-2 text-base font-medium text-slate-400">/hr</span>
-                                        </p>
-                                    ) : (
-                                        <p className="mt-3 text-4xl font-black text-white">Pricing TBD</p>
-                                    )}
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <div>
-                                        <EditModal room={room} />
-                                    </div>
-                                    <div>
-                                        <DeleteAlert room={room} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="rounded-[1.75rem] border border-white/10 bg-slate-900/70 p-5">
-                                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Room details</p>
-                                <dl className="mt-5 space-y-4 text-slate-300">
-                                    {floor != null && (
-                                        <div className="flex items-center justify-between gap-4 text-sm">
-                                            <span className="text-slate-400">Floor</span>
-                                            <span className="font-semibold text-white">{floor}</span>
-                                        </div>
-                                    )}
-                                    {capacity != null && (
-                                        <div className="flex items-center justify-between gap-4 text-sm">
-                                            <span className="text-slate-400">Capacity</span>
-                                            <span className="font-semibold text-white">{capacity} seats</span>
-                                        </div>
-                                    )}
-                                    {bookingCount != null && (
-                                        <div className="flex items-center justify-between gap-4 text-sm">
-                                            <span className="text-slate-400">Booked</span>
-                                            <span className="font-semibold text-white">{bookingCount} times</span>
-                                        </div>
-                                    )}
-                                    {description && (
-                                        <div className="flex items-start justify-between gap-4 text-sm">
-                                            <span className="text-slate-400">Summary</span>
-                                            <span className="max-w-[13rem] text-right font-medium text-white">
-                                                {description.length > 48 ? `${description.slice(0, 48)}…` : description}
-                                            </span>
-                                        </div>
-                                    )}
-                                </dl>
-                            </div>
-                            <div>
-                                {/* <BookModal room={room} />
-                                <RoomBookingSection room={room} />
-                            </div>
-                        </div>
-                    </div>
-                </aside> */}
-
-
-
-
-
-
-
-
-
                 <aside className="lg:col-span-1">
                     <div className="sticky top-24 rounded-[2rem] border border-white/10 bg-slate-950/90 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
 
@@ -266,18 +193,6 @@ export default async function RoomDetails({ params }) {
                                             Pricing TBD
                                         </p>
                                     )}
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-
-                                    <div>
-                                        <EditModal room={room} />
-                                    </div>
-
-                                    <div>
-                                        <DeleteAlert room={room} />
-                                    </div>
-
                                 </div>
 
                             </div>

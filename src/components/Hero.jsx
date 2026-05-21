@@ -1,313 +1,443 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { BookOpen, Users, Star } from 'lucide-react';
+import Link from "next/link";
+import { motion } from "framer-motion";
 
-// Floating blobs component
-const FloatingBlob = ({ delay = 0, size = 'w-96', top = '10%', left = '-5%' }) => {
+import {
+  BookOpen,
+  Users,
+  Star,
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  Wifi,
+} from "lucide-react";
+
+/* FLOATING BLUR */
+const FloatingBlob = ({
+  delay = 0,
+  size = "w-[420px] h-[420px]",
+  top = "10%",
+  left = "-5%",
+}) => {
   return (
     <motion.div
-      className={`absolute ${size} h-96 bg-linear-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl pointer-events-none`}
+      className={`absolute ${size} rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-cyan-400/10 blur-3xl`}
       style={{ top, left }}
       animate={{
+        x: [0, 40, 0],
         y: [0, 30, 0],
-        x: [0, 20, 0],
+        scale: [1, 1.08, 1],
       }}
       transition={{
-        duration: 6,
+        duration: 10,
         delay,
         repeat: Infinity,
-        ease: 'easeInOut',
+        ease: "easeInOut",
       }}
     />
   );
 };
 
-// Stat card component
-const StatCard = ({ icon: Icon, label, value, delay }) => {
+/* STATS CARD */
+const StatCard = ({
+  icon: Icon,
+  label,
+  value,
+  delay,
+}) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6 }}
-      className="glass-effect p-4 rounded-xl backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all"
+      initial={{
+        opacity: 0,
+        y: 30,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        delay,
+        duration: 0.7,
+      }}
+      whileHover={{
+        y: -5,
+      }}
+      className="group rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl transition-all duration-300 hover:border-blue-500/30 hover:bg-white/[0.07]"
     >
-      <motion.div
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 3, delay: delay + 0.3, repeat: Infinity }}
-        className="flex items-center gap-3"
-      >
-        <div className="p-2 bg-linear-to-br from-blue-400 to-purple-400 rounded-lg">
-          <Icon size={20} className="text-white" />
+      <div className="flex items-center gap-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
+          <Icon className="h-6 w-6 text-white" />
         </div>
+
         <div>
-          <p className="text-sm text-gray-400">{label}</p>
-          <p className="text-lg font-semibold text-white">{value}</p>
+          <p className="text-sm text-slate-400">
+            {label}
+          </p>
+
+          <h3 className="text-2xl font-black text-white">
+            {value}
+          </h3>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
 
 export default function Hero() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: 'easeOut' },
-    },
-  };
-
-  const badgeVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.6 },
-    },
-  };
-
-  const headingVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, delay: 0.2 },
-    },
-  };
-
-  const descriptionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, delay: 0.4 },
-    },
-  };
-
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, delay: 0.6 },
-    },
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.8, x: 40 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      x: 0,
-      transition: { duration: 0.8, delay: 0.3 },
-    },
-  };
-
-  const buttonHoverVariants = {
-    hover: { scale: 1.05, y: -2 },
-    tap: { scale: 0.98 },
-  };
-
-
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-900 via-slate-900 to-slate-800 overflow-hidden relative">
-      {/* Animated Background Blobs */}
-      <FloatingBlob delay={0} size="w-96" top="10%" left="-5%" />
-      <FloatingBlob delay={1} size="w-72" top="60%" left="70%" />
-      <FloatingBlob delay={2} size="w-80" top="20%" left="60%" />
+    <section className="relative min-h-screen overflow-hidden bg-[#020617]">
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.15),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.15),transparent_35%)]" />
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-slate-900/50 to-slate-900 pointer-events-none" />
+      {/* GRID */}
+      <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:60px_60px]" />
 
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Left Content */}
-          <motion.div className="flex flex-col space-y-6 md:space-y-8">
-            {/* Badge */}
-            <motion.div variants={badgeVariants} className="w-fit">
-              <div className="glass-effect inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all">
-                <div className="w-2 h-2 bg-linear-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-transparent bg-clip-text bg-linear-to-r from-blue-300 to-purple-300">
-                  Quiet • Productive • Private
-                </span>
-              </div>
-            </motion.div>
+      {/* FLOATING BLOBS */}
+      <FloatingBlob
+        delay={0}
+        top="5%"
+        left="-10%"
+      />
 
-            {/* Heading */}
-            <motion.div variants={headingVariants}>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                Find Your
-                <br />
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-purple-400 to-pink-400">
-                  Perfect Study Room
-                </span>
-              </h1>
-            </motion.div>
+      <FloatingBlob
+        delay={1}
+        top="55%"
+        left="70%"
+        size="w-[350px] h-[350px]"
+      />
 
-            {/* Description */}
-            <motion.div variants={descriptionVariants}>
-              <p className="text-lg md:text-xl text-gray-300 max-w-md leading-relaxed">
-                Browse and book quiet, private study rooms in your library. List your own room and earn.
-              </p>
-            </motion.div>
+      <FloatingBlob
+        delay={2}
+        top="20%"
+        left="65%"
+        size="w-[280px] h-[280px]"
+      />
 
-            {/* CTA Buttons */}
+      {/* MAIN */}
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-center px-4 py-28 sm:px-6 lg:px-8">
+        <div className="grid w-full items-center gap-16 lg:grid-cols-2">
+          {/* LEFT CONTENT */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.8,
+            }}
+            className="relative"
+          >
+            {/* BADGE */}
             <motion.div
-              variants={buttonVariants}
-              className="flex flex-col sm:flex-row gap-4 pt-4"
+              initial={{
+                opacity: 0,
+                scale: 0.9,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              transition={{
+                delay: 0.2,
+              }}
+              className="mb-8 inline-flex items-center gap-3 rounded-full border border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-purple-500/10 px-5 py-3 backdrop-blur-xl"
+            >
+              <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-gradient-to-r from-blue-400 to-purple-400" />
+
+              <span className="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-sm font-semibold text-transparent">
+                Quiet • Smart • Productive
+              </span>
+            </motion.div>
+
+            {/* TITLE */}
+            <motion.h1
+              initial={{
+                opacity: 0,
+                y: 40,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay: 0.3,
+                duration: 0.8,
+              }}
+              className="max-w-2xl text-5xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
+            >
+              Discover Your
+              <span className="mt-3 block bg-gradient-to-r from-blue-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent">
+                Dream Study Space
+              </span>
+            </motion.h1>
+
+            {/* DESCRIPTION */}
+            <motion.p
+              initial={{
+                opacity: 0,
+                y: 25,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay: 0.5,
+              }}
+              className="mt-8 max-w-xl text-lg leading-8 text-slate-300 sm:text-xl"
+            >
+              Book modern, peaceful,
+              and fully-equipped study
+              rooms for deep focus,
+              team collaboration, and
+              productive learning.
+            </motion.p>
+
+            {/* FEATURES */}
+            <motion.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              transition={{
+                delay: 0.7,
+              }}
+              className="mt-8 flex flex-wrap gap-4"
+            >
+              {[
+                {
+                  icon: Wifi,
+                  text: "Fast Wi-Fi",
+                },
+                {
+                  icon: ShieldCheck,
+                  text: "Private Rooms",
+                },
+                {
+                  icon: Sparkles,
+                  text: "Modern Setup",
+                },
+              ].map((item, i) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur-xl"
+                  >
+                    <Icon className="h-5 w-5 text-blue-400" />
+
+                    <span className="text-sm font-medium text-slate-200">
+                      {item.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </motion.div>
+
+            {/* BUTTONS */}
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay: 0.8,
+              }}
+              className="mt-12 flex flex-col gap-5 sm:flex-row"
             >
               <motion.div
-                variants={buttonHoverVariants}
-                whileHover="hover"
-                whileTap="tap"
+                whileHover={{
+                  scale: 1.04,
+                  y: -2,
+                }}
+                whileTap={{
+                  scale: 0.98,
+                }}
               >
-                <Link href="/rooms">
-                  <button className="group relative w-full sm:w-auto px-8 py-3 md:py-4 bg-linear-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg overflow-hidden transition-all duration-300 cursor-pointer">
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <BookOpen size={20} />
-                      Explore Rooms
-                    </span>
-                    <div className="absolute inset-0 bg-linear-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </button>
+                <Link
+                  href="/rooms"
+                  className="group inline-flex h-16 items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 px-8 text-lg font-bold text-white shadow-2xl shadow-blue-500/20 transition-all"
+                >
+                  <BookOpen className="h-5 w-5" />
+
+                  Explore Rooms
+
+                  <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </motion.div>
 
               <motion.div
-                variants={buttonHoverVariants}
-                whileHover="hover"
-                whileTap="tap"
+                whileHover={{
+                  scale: 1.04,
+                  y: -2,
+                }}
+                whileTap={{
+                  scale: 0.98,
+                }}
               >
-                <button className="group relative w-full sm:w-auto px-8 py-3 md:py-4 glass-effect backdrop-blur-md bg-white/10 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/20 transition-all duration-300">
-                  <span className="relative z-10 flex items-center justify-center gap-2">
-                    <Users size={20} />
-                    List Your Room
-                  </span>
-                </button>
+                <Link
+                  href="/add-room"
+                  className="inline-flex h-16 items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-8 text-lg font-semibold text-white backdrop-blur-xl transition-all hover:border-blue-500/30 hover:bg-white/[0.08]"
+                >
+                  <Users className="h-5 w-5 text-blue-400" />
+                  List Your Room
+                </Link>
               </motion.div>
             </motion.div>
 
-            {/* Stats Cards */}
-            <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8">
+            {/* STATS */}
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay: 1,
+              }}
+              className="mt-14 grid gap-5 sm:grid-cols-3"
+            >
               <StatCard
                 icon={BookOpen}
-                label="Rooms Available"
+                label="Study Rooms"
                 value="120+"
-                delay={0.8}
+                delay={1}
               />
+
+              <StatCard
+                icon={Users}
+                label="Active Users"
+                value="8K+"
+                delay={1.1}
+              />
+
               <StatCard
                 icon={Star}
-                label="User Rating"
+                label="Rating"
                 value="4.9"
-                delay={1}
+                delay={1.2}
               />
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Illustration */}
+          {/* RIGHT SIDE */}
           <motion.div
-            variants={imageVariants}
-            className="hidden lg:flex items-center justify-center"
+            initial={{
+              opacity: 0,
+              x: 60,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            transition={{
+              duration: 0.9,
+            }}
+            className="relative hidden lg:block"
           >
+            {/* MAIN CARD */}
             <motion.div
               animate={{
-                y: [0, 20, 0],
+                y: [0, -12, 0],
               }}
               transition={{
-                duration: 4,
+                duration: 5,
                 repeat: Infinity,
-                ease: 'easeInOut',
+                ease: "easeInOut",
               }}
-              className="relative"
+              className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl backdrop-blur-2xl"
             >
-              {/* Placeholder for hero image - can be replaced with actual image or illustration */}
-              <div className="w-full h-96 relative">
-                {/* Glowing circle background */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
+              {/* TOP LIGHT */}
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400" />
+
+              {/* IMAGE */}
+              <div className="relative overflow-hidden rounded-[2rem]">
+                <img
+                  src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1600&auto=format&fit=crop"
+                  alt="study room"
+                  className="h-[540px] w-full object-cover"
                 />
 
-                {/* Main illustration area with glass effect */}
-                <div className="relative h-full glass-effect backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-3xl p-8 flex items-center justify-center overflow-hidden">
-                  {/* Decorative elements */}
-                  <motion.div
-                    className="absolute top-6 right-6 w-24 h-24 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-2xl blur-xl opacity-30"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 90, 0],
-                    }}
-                    transition={{
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                  />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent" />
+              </div>
 
-                  <motion.div
-                    className="absolute bottom-6 left-6 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-xl opacity-30"
-                    animate={{
-                      scale: [1.2, 1, 1.2],
-                      rotate: [0, -90, 0],
-                    }}
-                    transition={{
-                      duration: 6,
-                      delay: 1,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                  />
-
-                  {/* Content overlay */}
-                  <div className="relative z-10 text-center space-y-4">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }}
-                    >
-                      <BookOpen size={64} className="mx-auto text-blue-400" />
-                    </motion.div>
-                    <p className="text-white font-semibold text-lg">Study Room Finder</p>
+              {/* FLOAT CARD */}
+              <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                }}
+                className="absolute bottom-10 left-10 rounded-3xl border border-white/10 bg-[#0f172a]/80 p-5 backdrop-blur-2xl"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500">
+                    <Sparkles className="h-7 w-7 text-white" />
                   </div>
+
+                  <div>
+                    <h3 className="text-lg font-bold text-white">
+                      Premium Workspace
+                    </h3>
+
+                    <p className="text-sm text-slate-400">
+                      Comfortable • Quiet
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* SMALL FLOATING CARD */}
+            <motion.div
+              animate={{
+                y: [0, 10, 0],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+              }}
+              className="absolute -right-8 top-20 rounded-3xl border border-white/10 bg-[#0f172a]/80 p-5 backdrop-blur-2xl"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-400">
+                    Available Today
+                  </p>
+
+                  <h3 className="text-xl font-black text-white">
+                    24 Rooms
+                  </h3>
                 </div>
               </div>
             </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Bottom gradient accent */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none" />
-    </div>
+      {/* BOTTOM FADE */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#020617] to-transparent" />
+    </section>
   );
 }

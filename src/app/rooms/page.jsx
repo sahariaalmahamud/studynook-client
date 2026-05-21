@@ -121,6 +121,15 @@ const RoomsPage = () => {
                 <p className="mt-3 text-3xl font-semibold text-white">{activeFilters}</p>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-3xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-sky-400/40 hover:bg-slate-900 xl:hidden"
+            >
+              <Filter className="h-4 w-4 text-sky-300" />
+              Open filters
+            </button>
           </div>
         </header>
 

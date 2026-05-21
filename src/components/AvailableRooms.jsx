@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { fetchAvailableRooms } from "@/lib/rooms/data";
@@ -21,13 +21,9 @@ const AvailableRooms = async () => {
                             Handpicked premium rooms designed to help you master the most in-demand skills in the industry today.
                         </p>
                     </div>
-                    <Button
-                        variant="flat"
-                        color="primary"
-                        className="rounded-full font-bold group"
-                    >
-                        View All Rooms <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                    <Link href="/rooms" className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-500">
+                        View All Rooms <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

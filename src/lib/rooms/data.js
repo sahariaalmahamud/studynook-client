@@ -8,7 +8,7 @@ export const fetchRooms = async () => {
 
 
 export const fetchAvailableRooms = async () => {
-  const res = await fetch('http://localhost:8000/available-rooms');
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/available-rooms`);
   const data = await res.json();
   return data || [];
 };
