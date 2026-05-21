@@ -17,7 +17,7 @@ import { authClient } from "@/lib/auth-client";
 const BookModal = ({ room }) => {
   const { _id, roomName, image, hourlyRate } = room ?? {};
 
-  const {data: session} = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const user = session?.user;
   // console.log('user data', user);
 
@@ -138,20 +138,24 @@ const BookModal = ({ room }) => {
 
     try {
       const booking = {
-
         userId: user?.id,
         userImage: user?.image,
         userName: user?.name,
+
         roomId: _id,
         roomName,
         hourlyRate,
         image,
+
         date,
-        // startTime,
-        // endTime,
-        // note,
-        // totalHours,
-        // totalCost,
+        startTime,
+        endTime,
+        note,
+
+        totalHours,
+        totalCost,
+
+        status: "confirmed",
       };
 
       // console.log('payload', payload);
@@ -201,22 +205,22 @@ const BookModal = ({ room }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-9999 flex items-center justify-center bg-black/70 backdrop-blur-md px-4 py-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4"
         >
-          {/* BACKDROP */}
+          {/* backdrop */}
           <div
             className="absolute inset-0"
             onClick={handleClose}
           />
 
-          {/* MODAL */}
+          {/* modal */}
           <motion.div
             initial={{
               opacity: 0,
-              y: 40,
+              y: 30,
               scale: 0.95,
             }}
             animate={{
@@ -226,239 +230,150 @@ const BookModal = ({ room }) => {
             }}
             exit={{
               opacity: 0,
-              y: 40,
+              y: 20,
               scale: 0.95,
             }}
             transition={{
               duration: 0.25,
             }}
-            onClick={(e) => e.stopPropagation()}
-            className="relative z-10 w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#020617] shadow-[0_20px_120px_rgba(0,0,0,0.7)]"
+            className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-slate-950/90 shadow-2xl"
           >
-            {/* HEADER */}
-            <div className="flex items-start justify-between border-b border-white/10 p-6">
+            {/* header */}
+            <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-sky-400">
-                  Workspace Booking
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold text-white">
-                  Reserve {roomName}
-                </h2>
-
-                <p className="mt-2 text-sm text-slate-400">
-                  Select your preferred time slot and confirm booking.
-                </p>
+                <h2 className="text-xl font-bold text-white">Book Room</h2>
+                <p className="text-sm text-slate-400">{roomName}</p>
               </div>
-
               <button
                 onClick={handleClose}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900 text-slate-300 transition hover:bg-slate-800"
+                className="rounded-lg hover:bg-white/10 p-2 transition"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-slate-400" />
               </button>
             </div>
 
-            {/* BODY */}
-            <div className="grid gap-6 p-6 lg:grid-cols-[1.4fr_0.8fr]">
-              {/* FORM */}
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-6"
-              >
-                <div className="rounded-[1.8rem] border border-white/10 bg-slate-900/60 p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/10">
-                      <Calendar className="h-5 w-5 text-sky-400" />
-                    </div>
+            {/* form */}
+            <form onSubmit={handleSubmit} className="space-y-5 p-6">
+              {/* Date */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-300 mb-2">
+                  <Calendar className="inline mr-2 h-4 w-4" />
+                  Date
+                </label>
+                <input
+                  type="date"
+                  min={minDate}
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  required
+                />
+              </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        Booking Information
-                      </h3>
-
-                      <p className="text-sm text-slate-400">
-                        Fill in your booking details.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                    {/* DATE */}
-                    <label className="space-y-2">
-                      <span className="text-sm font-medium text-slate-200">
-                        Date
-                      </span>
-
-                      <input
-                        type="date"
-                        min={minDate}
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        required
-                        className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-sky-400"
-                      />
-                    </label>
-
-                    {/* START */}
-                    <label className="space-y-2">
-                      <span className="text-sm font-medium text-slate-200">
-                        Start Time
-                      </span>
-
-                      <input
-                        type="time"
-                        value={startTime}
-                        onChange={(e) =>
-                          setStartTime(e.target.value)
-                        }
-                        required
-                        className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-sky-400"
-                      />
-                    </label>
-
-                    {/* END */}
-                    <label className="space-y-2">
-                      <span className="text-sm font-medium text-slate-200">
-                        End Time
-                      </span>
-
-                      <input
-                        type="time"
-                        value={endTime}
-                        onChange={(e) =>
-                          setEndTime(e.target.value)
-                        }
-                        required
-                        className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-sky-400"
-                      />
-                    </label>
-
-                    {/* NOTE */}
-                    <label className="space-y-2 sm:col-span-2">
-                      <span className="text-sm font-medium text-slate-200">
-                        Additional Note
-                      </span>
-
-                      <textarea
-                        rows={5}
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        placeholder="Write additional information..."
-                        className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-sky-400"
-                      />
-                    </label>
-                  </div>
+              {/* Time Range */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
+                    <Clock3 className="inline mr-2 h-4 w-4" />
+                    Start Time
+                  </label>
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    required
+                  />
                 </div>
-
-                {(validationMessage || errorMessage) && (
-                  <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                    {validationMessage || errorMessage}
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-sky-400 disabled:opacity-60"
-                  >
-                    <CheckCircle2 className="h-4 w-4" />
-
-                    {isSubmitting
-                      ? "Booking..."
-                      : "Confirm Booking"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    className="rounded-2xl border border-slate-700 bg-slate-900 px-6 py-3 font-semibold text-slate-200 transition hover:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-
-              {/* SUMMARY */}
-              <div className="space-y-5">
-                <div className="rounded-[1.8rem] border border-white/10 bg-slate-900/70 p-6">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                    Booking Summary
-                  </p>
-
-                  <div className="mt-5 space-y-4">
-                    <div className="rounded-2xl bg-slate-950 p-5">
-                      <p className="text-sm text-slate-400">
-                        Total Cost
-                      </p>
-
-                      <h3 className="mt-2 text-4xl font-black text-white">
-                        ${totalCost.toFixed(2)}
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="rounded-2xl bg-slate-950 p-4">
-                        <p className="text-xs uppercase text-slate-500">
-                          Hours
-                        </p>
-
-                        <p className="mt-2 text-2xl font-bold text-white">
-                          {totalHours || 0}
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-slate-950 p-4">
-                        <p className="text-xs uppercase text-slate-500">
-                          Rate
-                        </p>
-
-                        <p className="mt-2 text-2xl font-bold text-white">
-                          ${hourlyRate}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl bg-slate-950 p-4">
-                      <p className="text-xs uppercase text-slate-500">
-                        Time Range
-                      </p>
-
-                      <p className="mt-2 text-sm text-slate-200">
-                        {startTime && endTime
-                          ? `${startTime} → ${endTime}`
-                          : "Select booking time"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-[1.8rem] border border-white/10 bg-slate-900/70 p-6">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                    Booking Notes
-                  </p>
-
-                  <div className="mt-4 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Clock3 className="mt-1 h-4 w-4 text-sky-400" />
-
-                      <p className="text-sm leading-6 text-slate-300">
-                        Booking cost updates automatically based on selected hours.
-                      </p>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <TextCursor className="mt-1 h-4 w-4 text-slate-400" />
-
-                      <p className="text-sm leading-6 text-slate-300">
-                        You can add extra notes before confirming your booking.
-                      </p>
-                    </div>
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
+                    End Time
+                  </label>
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    required
+                  />
                 </div>
               </div>
-            </div>
+
+              {/* Validation message */}
+              {validationMessage && (
+                <div className="rounded-lg bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm text-red-300">
+                  {validationMessage}
+                </div>
+              )}
+
+              {/* Duration & Cost */}
+              {isTimeRangeValid && (
+                <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-3 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">Duration</span>
+                    <span className="text-white font-semibold">{totalHours} hours</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">Hourly Rate</span>
+                    <span className="text-white font-semibold">${hourlyRate}/hr</span>
+                  </div>
+                  <div className="border-t border-blue-500/30 pt-2 flex justify-between">
+                    <span className="text-slate-300">Total Cost</span>
+                    <span className="text-blue-300 font-bold">${totalCost.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Note */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-300 mb-2">
+                  <TextCursor className="inline mr-2 h-4 w-4" />
+                  Additional Notes
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Any special requirements?"
+                  rows="2"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+                />
+              </div>
+
+              {/* Error message */}
+              {errorMessage && (
+                <div className="rounded-lg bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm text-red-300">
+                  {errorMessage}
+                </div>
+              )}
+
+              {/* Buttons */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="flex-1 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 font-semibold text-white hover:bg-white/10 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !isTimeRangeValid || !date}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      <span>Booking...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>Confirm Booking</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </motion.div>
         </motion.div>
       )}
