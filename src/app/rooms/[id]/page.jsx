@@ -1,14 +1,10 @@
 
-// import EnrollmentButton from '@/components/EnrollmentButton';
-// import { auth } from '@/lib/auth';
-// import BookModal from '@/components/BookModal';
-
-import RoomBookingSection from '@/components/RoomBookingSection';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { BookOpen, Clock, BarChart, Users, Edit3, Trash2, Calendar1 } from 'lucide-react';
+import { BookOpen, Clock, BarChart, Users } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import RoomBookingSection from '@/components/RoomBookingSection';
 
 const fetchSingleRoom = async (id) => {
     if (!id) {
@@ -18,6 +14,8 @@ const fetchSingleRoom = async (id) => {
     const {token} = await auth.api.getToken({
         headers: await headers()
     });
+
+    // console.log(token);
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/${id}`, {
         headers: {
@@ -39,15 +37,6 @@ const fetchSingleRoom = async (id) => {
     }
 };
 
-// const fetchSingleCourse = async (id, token) => {
-//     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/${id}`, {
-//         headers: {
-//             authorization: `Bearer ${token}` || ""
-//         }
-//     });
-//     const data = res.json();
-//     return data || {};
-// }
 
 export default async function RoomDetails({ params }) {
     const { id } = await params;
@@ -199,11 +188,7 @@ export default async function RoomDetails({ params }) {
 
                             <div className="rounded-[1.75rem] border border-white/10 bg-slate-900/70 p-5">
 
-                                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">
-                                    Room details
-                                </p>
-
-                                <dl className="mt-5 space-y-4 text-slate-300">
+                                <dl className="space-y-4 text-slate-300">
 
                                     {floor != null && (
                                         <div className="flex items-center justify-between gap-4 text-sm">
@@ -236,11 +221,9 @@ export default async function RoomDetails({ params }) {
 
                             </div>
 
-                            {/* BOOK BUTTON */}
                             <div>
                                 <RoomBookingSection room={room} />
                             </div>
-
                         </div>
 
                     </div>

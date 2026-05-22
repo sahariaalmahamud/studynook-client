@@ -116,6 +116,8 @@ export default function AddRoomPage() {
       data.createdAt =
         new Date();
 
+      const {data:tokenData} = await authClient.token();
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/rooms`,
         {
@@ -124,6 +126,7 @@ export default function AddRoomPage() {
           headers: {
             "Content-Type":
               "application/json",
+            authorization: `Bearer ${tokenData?.token}`,
           },
 
           body: JSON.stringify(data),

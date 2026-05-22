@@ -74,8 +74,16 @@ const MyBookingsPage = () => {
       try {
         setLoading(true);
 
+        const { data: tokenData } = await authClient.token();
+        console.log(tokenData);
+
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/bookings/${user?.id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/bookings/${user?.id}`,
+          {
+            headers: {
+              authorization: `Bearer ${tokenData?.token}`,
+            },
+          }
         );
 
         const data = await response.json();
@@ -139,6 +147,9 @@ const MyBookingsPage = () => {
     try {
       setCancelLoading(id);
 
+      const { data: tokenData } = await authClient.token();
+      console.log(tokenData);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}/cancel`,
         {
@@ -147,6 +158,7 @@ const MyBookingsPage = () => {
           headers: {
             "Content-Type":
               "application/json",
+            "authorization": `Bearer ${tokenData?.token}`
           },
 
           body: JSON.stringify({

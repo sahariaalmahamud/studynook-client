@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import {
     BookOpen,
     Menu,
     X,
-    User,
     LogOut,
-    LayoutDashboard,
     PlusCircle,
     CalendarCheck,
     Building2,
@@ -36,6 +35,17 @@ export function MainNavbar() {
 
     const { data: session, isPending } =
         authClient.useSession();
+    const pathname = usePathname();
+
+    const handleScrollToHero = (e) => {
+        if (pathname === "/") {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+        }
+    };
 
     // SCROLL EFFECT
     useEffect(() => {
@@ -149,6 +159,7 @@ export function MainNavbar() {
                     {/* LOGO */}
                     <Link
                         href="/"
+                        onClick={handleScrollToHero}
                         className="group flex items-center gap-3"
                     >
                         <motion.div
@@ -168,10 +179,6 @@ export function MainNavbar() {
                             <h2 className="bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-2xl font-black tracking-tight text-transparent">
                                 StudyNook
                             </h2>
-
-                            <p className="mt-1 text-[10px] uppercase tracking-[0.35em] text-slate-500">
-                                Workspace
-                            </p>
                         </div>
                     </Link>
 
@@ -181,7 +188,8 @@ export function MainNavbar() {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className="rounded-full px-5 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 hover:bg-sky-500/10 hover:text-white hover:shadow-lg hover:shadow-sky-500/10"
+                                onClick={item.href === "/" ? handleScrollToHero : undefined}
+                                className="rounded-full px-5 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 hover:bg-sky-500/10 hover:text-white hover:shadow-lg hover:shadow-sky-500/10 cursor-pointer"
                             >
                                 {item.label}
                             </Link>
@@ -230,7 +238,7 @@ export function MainNavbar() {
                                         src={
                                             session?.user
                                                 ?.image ||
-                                            "https://i.ibb.co/4pDNDk1/avatar.png"
+                                            "https://i.ibb.co.com/qLqCp0Lb/S-A-Mahamud.png"
                                         }
                                         alt="user"
                                         width={44}
@@ -247,7 +255,7 @@ export function MainNavbar() {
                                         </h3>
 
                                         <p className="text-xs text-slate-400">
-                                            Workspace Owner
+                                            Student
                                         </p>
                                     </div>
                                 </button>
@@ -284,7 +292,7 @@ export function MainNavbar() {
                                                             session
                                                                 ?.user
                                                                 ?.image ||
-                                                            "https://i.ibb.co/4pDNDk1/avatar.png"
+                                                            "https://i.ibb.co.com/qLqCp0Lb/S-A-Mahamud.png"
                                                         }
                                                         alt="user"
                                                         width={50}
@@ -315,14 +323,6 @@ export function MainNavbar() {
                                             {/* LINKS */}
                                             <div className="p-3">
                                                 <Link
-                                                    href="/dashboard"
-                                                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:bg-slate-900/70 hover:text-white"
-                                                >
-                                                    <LayoutDashboard className="h-5 w-5 text-sky-400" />
-                                                    Dashboard
-                                                </Link>
-
-                                                <Link
                                                     href="/add-room"
                                                     className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:bg-slate-900/70 hover:text-white"
                                                 >
@@ -345,14 +345,7 @@ export function MainNavbar() {
                                                     <CalendarCheck className="h-5 w-5 text-yellow-400" />
                                                     My Bookings
                                                 </Link>
-
-                                                <Link
-                                                    href="/settings"
-                                                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:bg-slate-900/70 hover:text-white"
-                                                >
-                                                    <User className="h-5 w-5 text-pink-400" />
-                                                    Settings
-                                                </Link>
+                       
 
                                                 {/* LOGOUT */}
                                                 <button
@@ -474,7 +467,7 @@ export function MainNavbar() {
 
                                 <Link
                                     href="/register"
-                                    className="flex items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 font-bold text-white shadow-lg shadow-sky-500/30 transition-all duration-300 hover:bg-sky-400"
+                                    className="flex items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 font-bold text-white shadow-lg shadow-sky-500/30 transition-all duration-300 hover:bg-sky-400 cursor-pointer" 
                                 >
                                     Join Free
                                 </Link>

@@ -158,15 +158,15 @@ const BookModal = ({ room }) => {
         status: "confirmed",
       };
 
-      // console.log('payload', payload);
+      const {data: tokenData} = await authClient.token();
+      console.log('token data', tokenData);
 
-      const response = await fetch(
-        // `${process.env.NEXT_PUBLIC_API_URL}/rooms/${_id}/bookings`,
-        `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "authorization": `Bearer ${tokenData?.token}`
           },
           body: JSON.stringify(booking),
         }

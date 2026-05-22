@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
-import { BookOpen, Mail, Lock, User, Loader2, ChevronRight } from 'lucide-react';
+import { BookOpen, Mail, Lock, User, Loader2, ChevronRight, Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -16,29 +16,113 @@ export default function RegisterPage() {
         email: '',
         password: '',
         confirmPassword: '',
+        profilePicUrl: '',
     });
+    const [formErrors, setFormErrors] = useState({
+        fields: '',
+        password: '',
+        confirmPassword: '',
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [profilePic, setProfilePic] = useState(null);
+    const [profilePicPreview, setProfilePicPreview] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        setFormErrors(prev => ({ ...prev, [name]: '' }));
+        if (name === 'password' || name === 'confirmPassword') {
+            setFormErrors(prev => ({ ...prev, confirmPassword: '' }));
+        }
+    };
+
+    const handleProfilePicChange = (e) => {
+        const file = e.target.files?.[0] ?? null;
+        if (!file) {
+            if (profilePicPreview?.startsWith('blob:')) {
+                URL.revokeObjectURL(profilePicPreview);
+            }
+            setProfilePic(null);
+            setProfilePicPreview('');
+            return;
+        }
+
+        if (profilePicPreview?.startsWith('blob:')) {
+            URL.revokeObjectURL(profilePicPreview);
+        }
+
+        setFormData(prev => ({ ...prev, profilePicUrl: '' }));
+        setProfilePic(file);
+        setProfilePicPreview(URL.createObjectURL(file));
+    };
+
+    const handleProfilePicUrlChange = (e) => {
+        const url = e.target.value;
+
+        if (profilePicPreview?.startsWith('blob:')) {
+            URL.revokeObjectURL(profilePicPreview);
+        }
+
+        setProfilePic(null);
+        setProfilePicPreview(url);
+        setFormData(prev => ({ ...prev, profilePicUrl: url }));
+    };
+
+    const validatePassword = (password) => {
+        const results = [];
+
+        if (password.length < 6) {
+            results.push('at least 6 characters');
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            results.push('one uppercase letter');
+        }
+
+        if (!/[a-z]/.test(password)) {
+            results.push('one lowercase letter');
+        }
+
+        return results;
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        
+        setFormErrors({ fields: '', password: '', confirmPassword: '' });
+
         if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+            setFormErrors(prev => ({ ...prev, fields: 'Please fill in all fields' }));
             toast.error('Please fill in all fields');
             return;
         }
 
-        if (formData.password !== formData.confirmPassword) {
-            toast.error('Passwords do not match');
+        const passwordErrors = validatePassword(formData.password);
+        if (passwordErrors.length) {
+            setFormErrors(prev => ({
+                ...prev,
+                password: `Password must contain ${passwordErrors.join(', ')}.`,
+            }));
             return;
         }
 
-        if (formData.password.length < 8) {
-            toast.error('Password must be at least 8 characters');
+        if (formData.password !== formData.confirmPassword) {
+            setFormErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match' }));
             return;
+        }
+
+        const defaultProfileImage = 'https://i.ibb.co.com/qLqCp0Lb/S-A-Mahamud.png';
+        let profileImageString;
+        if (profilePic) {
+            profileImageString = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(profilePic);
+            });
+        } else if (formData.profilePicUrl.trim()) {
+            profileImageString = formData.profilePicUrl.trim();
+        } else {
+            profileImageString = defaultProfileImage;
         }
 
         setLoading(true);
@@ -47,6 +131,7 @@ export default function RegisterPage() {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
+                image: profileImageString,
                 callbackURL: '/'
             });
 
@@ -133,6 +218,11 @@ export default function RegisterPage() {
 
                     {/* Registration Form */}
                     <form onSubmit={handleRegister} className="space-y-4 mb-6">
+                        {formErrors.fields ? (
+                            <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-100">
+                                {formErrors.fields}
+                            </div>
+                        ) : null}
                         <div>
                             <label htmlFor="name" className="block text-sm font-semibold text-slate-300 mb-2">
                                 Full name
@@ -170,6 +260,40 @@ export default function RegisterPage() {
                         </div>
 
                         <div>
+                            <label htmlFor="profilePic" className="block text-sm font-semibold text-slate-300 mb-2">
+                                Profile picture
+                            </label>
+                            <input
+                                id="profilePic"
+                                name="profilePic"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleProfilePicChange}
+                                className="w-full text-xs file:mr-4 file:rounded-full file:border-0 file:bg-slate-800 file:px-4 file:py-2 file:text-slate-200 file:shadow-sm file:ring-1 file:ring-inset file:ring-white/10 text-slate-300 placeholder:text-slate-500"
+                            />
+                            <p className="text-xs text-slate-500 mt-1">Optional: upload a photo or paste a picture link below.</p>
+                            <input
+                                id="profilePicUrl"
+                                name="profilePicUrl"
+                                type="url"
+                                value={formData.profilePicUrl}
+                                onChange={handleProfilePicUrlChange}
+                                placeholder="https://example.com/photo.jpg"
+                                className="mt-3 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition"
+                            />
+                            {profilePicPreview ? (
+                                <div className="mt-3 flex items-center gap-3">
+                                    <img
+                                        src={profilePicPreview}
+                                        alt="Profile preview"
+                                        className="h-14 w-14 rounded-full object-cover border border-white/10"
+                                    />
+                                    <span className="text-sm text-slate-300">Preview selected image</span>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        <div>
                             <label htmlFor="password" className="block text-sm font-semibold text-slate-300 mb-2">
                                 Password
                             </label>
@@ -178,14 +302,29 @@ export default function RegisterPage() {
                                 <input
                                     id="password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     value={formData.password}
                                     onChange={handleChange}
                                     placeholder="••••••••"
-                                    className="w-full pl-11 pr-4 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition"
+                                    className="w-full pl-11 pr-11 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition"
                                 />
+                                {formData.password ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(prev => !prev)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                ) : null}
                             </div>
-                            <p className="text-xs text-slate-500 mt-1">Must be at least 8 characters</p>
+                            <p className="text-xs text-slate-500 mt-1">
+                                Must be at least 6 characters and include one uppercase letter and one lowercase letter.
+                            </p>
+                            {formErrors.password ? (
+                                <p className="text-xs text-rose-400 mt-2">{formErrors.password}</p>
+                            ) : null}
                         </div>
 
                         <div>
@@ -204,6 +343,9 @@ export default function RegisterPage() {
                                     className="w-full pl-11 pr-4 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition"
                                 />
                             </div>
+                            {formErrors.confirmPassword ? (
+                                <p className="text-xs text-rose-400 mt-2">{formErrors.confirmPassword}</p>
+                            ) : null}
                         </div>
 
                         <button
